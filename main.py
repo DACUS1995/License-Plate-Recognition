@@ -1,9 +1,10 @@
 import argparse
+import os
 
 from server import app
 
 def main(args):
-	pass
+	print(f"{os.getpid()}Running license detector")
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()

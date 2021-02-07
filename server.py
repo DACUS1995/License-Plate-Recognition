@@ -1,7 +1,6 @@
 import json
 from typing import List
 
-from PIL import Image
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,8 +22,8 @@ app.add_middleware(
 	allow_headers=["*"],
 )
 
-@app.post("/predict")
-async def predict(file: UploadFile = File(...)):
+@app.post("/detect")
+async def detect(file: UploadFile = File(...)):
 	if file is None:
 		raise HTTPException(status_code=404, detail="No file detected!")
 
