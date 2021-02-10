@@ -10,6 +10,12 @@ def test_detector():
 
 	image = Image.open("car.jpg").resize((800,800)).convert("RGB")
 	image = _detector.preprocess_image(image)
+	result = _detector.detect_single(image)
+
+	expected = "A5998"
+
+	if result != expected:
+		raise Exception(f"Result {result} | should have been {expected}")
 
 def test_server():
 	pass

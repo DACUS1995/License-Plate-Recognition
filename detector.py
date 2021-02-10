@@ -2,6 +2,7 @@ import cv2
 from PIL import Image
 import numpy as np
 import pytesseract
+import matplotlib.pyplot as plt
 
 class Detector():
 	def __init__(self):
@@ -13,6 +14,11 @@ class Detector():
 
 		x1, y1, x2, y2 = self.localize_plate(gray_image)
 		license_plate = gray_image[y1:y2+1, x1:x2+1]
+
+		# TODO Add perspective transform
+		M = cv2.getPerspectiveTransform(pt1,pts2)
+		dst = cv2.warpPerspective(paper,M,(500,400))
+
 		license_plate_number = self.extract_characters(license_plate)
 		return license_plate_number
 
@@ -34,7 +40,9 @@ class Detector():
 			
 			if len(approx) == 4:
 				license_plate_contour = approx
-				# cv2.drawContours(gray_image, [license_plate_contour], -1, (0, 0, 255), 3)
+				cv2.drawContours(gray_image, [license_plate_contour], -1, (0, 0, 255), 3)
+				cv2.imshow("image", gray_image)
+				cv2.waitKey()
 				break
 
 		license_plate_contour = np.array(license_plate_contour).squeeze()
@@ -47,6 +55,18 @@ class Detector():
 
 	def extract_characters(self, plate_image):
 		#TODO separate the chars using the image histogram for x and y axis and then mnist for each of them
+		# canny = cv2.Canny(plate_image, 170, 255, 1)
+
+		plate_image = 255 - plate_image
+		plate_image[plate_image < 200] = 0
+		img_row_sum = np.sum(plate_image,axis=1).tolist()
+
+		plt.plot(img_row_sum)
+		plt.show()
+
+		cv2.imshow("image", plate_image)
+		cv2.waitKey()
+
 		pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract'
 		text = pytesseract.image_to_string(plate_image, config='--psm 11')
 		return text
@@ -59,7 +79,7 @@ class Detector():
 if __name__ == "__main__":
 	det = Detector()
 
-	image = Image.open("car.jpg").resize((800,800)).convert("RGB")
+	image = Image.open("car2.jpg").resize((800,800)).convert("RGB")
 	image = np.array(image)
 	
 	image = det.preprocess_image(image)
