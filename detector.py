@@ -7,8 +7,18 @@ import matplotlib.pyplot as plt
 from utils import deEmojify
 
 class Detector():
+	__instance = None
+	@staticmethod
+	def getInstance():
+		if Detector.__instance == None:
+			Detector()
+		return Detector.__instance
+
 	def __init__(self):
-		pass
+		if Detector.__instance != None:
+			raise Exception("Singleton!")
+		else:
+			Detector.__instance = self
 
 	def detect_single(self, image):
 		gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

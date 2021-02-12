@@ -2,12 +2,13 @@ import json
 from typing import List
 
 from fastapi import FastAPI, HTTPException, File, UploadFile
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from PIL import Image
+import io
+from detector import Detector
 
-from predict_classification import get_classification_prediction
-
-device = torch.device(Config.device)
 app = FastAPI()
 
 origins = [
@@ -28,8 +29,13 @@ async def detect(file: UploadFile = File(...)):
 		raise HTTPException(status_code=404, detail="No file detected!")
 
 	file_bytes = await file.read()
-	class_id, class_name = get_classification_prediction(raw_input=file_bytes)
-	return jsonify({"class_id": class_id, "class_name": class_name})
+	detector = Detector.getInstance()
+
+	image = Image.open(io.BytesIO(file_bytes))
+	image = detector.preprocess_image(image)
+	license_plate = detector.detect_single(image=image)
+
+	return jsonable_encoder({"license": license_plate})
 
 @app.get("/")
 async def root():
