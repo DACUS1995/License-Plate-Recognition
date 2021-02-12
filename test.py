@@ -3,16 +3,17 @@ import inspect
 import sys
 import argparse
 
+from utils import logc, bcolors
 from detector import Detector
 
 def test_detector():
 	_detector = Detector()
 
-	image = Image.open("car.jpg").resize((800,800)).convert("RGB")
+	image = Image.open("car2.jpg").convert("RGB")
 	image = _detector.preprocess_image(image)
 	result = _detector.detect_single(image)
 
-	expected = "A5998"
+	expected = "CZ20 FSE"
 
 	if result != expected:
 		raise Exception(f"Result {result} | should have been {expected}")
@@ -36,15 +37,15 @@ def run_all_tests():
 		
 		try:
 			f()
-			print(f"Passed")
+			logc("Passed", bcolors.OKGREEN)
 		except Exception as exc:
-			print(f"Failed: {exc}")
+			logc(f"Failed: {exc}", bcolors.FAIL)
 
 
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--run-all", default=False, action="store_true")
+	parser.add_argument("--run-all", default=True, action="store_true")
 	args = parser.parse_args()
 
 	if args.run_all:
