@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 from utils import logc, bcolors
 from detector import Detector
 
-TEST_IMAGE = "car2.jpg"
+TEST_IMAGE = "images/car2.jpg"
 TEST_EXPECTED_LICENSE_PLATE = "CZ20 FSE"
 
 def test_detector():
@@ -58,7 +58,6 @@ def run_all_tests():
 		except Exception as exc:
 			tests_failed_counter += 1
 			logc(f"Failed: {exc}", bcolors.FAIL)
-			traceback.print_exc()
 
 	print("---")
 	print(f"Summary: {tests_passed_counter} passed | {tests_failed_counter} failed")

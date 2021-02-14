@@ -94,7 +94,7 @@ class Detector():
 if __name__ == "__main__":
 	det = Detector()
 
-	image = Image.open("car2.jpg").convert("RGB")
+	image = Image.open("images/car2.jpg").convert("RGB")
 	image = np.array(image)
 
 	image = det.preprocess_image(image)
