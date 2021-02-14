@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 import pytesseract
 import matplotlib.pyplot as plt
+import sys
 
 from utils import deEmojify
 
@@ -86,7 +87,9 @@ class Detector():
 		return image
 
 	def _apply_tesseract(self, plate_image):
-		pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract'
+		if sys.platform == "win32":
+			pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract'
+			
 		text = pytesseract.image_to_string(plate_image, config='--psm 11')
 		return text
 
