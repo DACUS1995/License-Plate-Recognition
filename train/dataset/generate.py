@@ -38,10 +38,11 @@ def generate_data(destination_path, size):
 				draw.text((0, 0),new_word,(0,0,0),font=font)
 				draw = ImageDraw.Draw(img)
 				img.save(destination_path + 'images/' + str(imageCounter) + ".png")
-				imageCounter += 1
 	
 				txt_file = open(destination_path + 'transcripts/'+ str(imageCounter) +'.txt', 'w', encoding = 'utf8')
 				txt_file.write(new_word)
+				
+				imageCounter += 1
 
 if __name__ == "__main__":
 	generate_data("training/", 10)
