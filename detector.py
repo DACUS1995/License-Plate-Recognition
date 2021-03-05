@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import sys
 
 from utils import deEmojify
+from custom_model_handler import CustomModelHandler
 
 class Detector():
 	__instance = None
@@ -67,6 +68,8 @@ class Detector():
 		if method == "tesseract":
 			result = self._apply_tesseract(plate_image)
 			return result.split("\n")[0]
+		elif method == "custom_model_v1":
+			CustomModelHandler.getInstance("TranscribeModel")
 		elif method == "custom":
 			plate_image = 255 - plate_image
 			plate_image[plate_image < 200] = 0

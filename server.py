@@ -26,7 +26,7 @@ app.add_middleware(
 @app.post("/detect")
 async def detect(file: UploadFile = File(...)):
 	if file is None:
-		raise HTTPException(status_code=404, detail="No file detected!")
+		raise HTTPException(status_code=404, detail="No image detected!")
 
 	file_bytes = await file.read()
 	detector = Detector.getInstance()

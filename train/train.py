@@ -23,7 +23,7 @@ import numpy as np
 
 BATCH_SIZE = 256
 WORKERS = 1
-EPOCHS = 5
+EPOCHS = 80
 MAX_WORD_LENGTH = 10
 ALPHABET = string.ascii_letters + string.digits + "_" #blank char for CTC
 OUTPUT_SEQUENCE_LENGTH = 10
@@ -108,6 +108,7 @@ def train_model():
 	loss_criterion = nn.NLLLoss()
 	scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=0.001, steps_per_epoch=10, epochs=EPOCHS, anneal_strategy='linear')
 	best_distance = float("inf")
+	best_model_params = None
 
 	since = time.time()
 	for epoch in range(EPOCHS):
@@ -124,7 +125,7 @@ def train_model():
 			loss, distance = train_step(model, data, optimizer, loss_criterion)
 			
 			running_loss += loss * BATCH_SIZE
-			running_distance += distance * BATCH_SIZE
+			running_distance += distance
 			training_loss.append(loss)
 			loop.set_postfix(loss=loss)
 
@@ -143,7 +144,7 @@ def train_model():
 			loss, distance = validation_step(model, data, loss_criterion)
 
 			running_loss += loss * BATCH_SIZE
-			running_distance += distance * BATCH_SIZE
+			running_distance += distance
 			validation_loss.append(loss)
 
 		epoch_loss = running_loss / validation_dataset_size
@@ -153,6 +154,7 @@ def train_model():
 		if best_distance > epoch_distance:
 			best_distance = epoch_distance
 			save_checkpoint(model, optimizer, epoch)
+			best_model_params = copy.deepcopy(model.state_dict())
 
 
 	time_elapsed = time.time() - since
