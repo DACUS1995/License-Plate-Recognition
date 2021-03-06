@@ -33,9 +33,24 @@ async def detect(file: UploadFile = File(...)):
 
 	image = Image.open(io.BytesIO(file_bytes))
 	image = detector.preprocess_image(image)
-	license_plate = detector.detect_single(image=image)
+	license_plate = detector.detect_single(image=image, method="tesseract")
 
 	return jsonable_encoder({"license": license_plate})
+
+@app.post("/detect/v1")
+async def detect(file: UploadFile = File(...)):
+	if file is None:
+		raise HTTPException(status_code=404, detail="No image detected!")
+
+	file_bytes = await file.read()
+	detector = Detector.getInstance()
+
+	image = Image.open(io.BytesIO(file_bytes))
+	image = detector.preprocess_image(image)
+	license_plate = detector.detect_single(image=image, method="custom_model_v1")
+
+	return jsonable_encoder({"license": license_plate})
+
 
 @app.get("/")
 async def root():

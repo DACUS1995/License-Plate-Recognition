@@ -21,9 +21,9 @@ import time
 import numpy as np
 
 
-BATCH_SIZE = 256
+BATCH_SIZE = 32
 WORKERS = 1
-EPOCHS = 80
+EPOCHS = 100
 MAX_WORD_LENGTH = 10
 ALPHABET = string.ascii_letters + string.digits + "_" #blank char for CTC
 OUTPUT_SEQUENCE_LENGTH = 10

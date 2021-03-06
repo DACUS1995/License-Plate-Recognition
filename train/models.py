@@ -22,15 +22,16 @@ class TranscribeModel(nn.Module):
 			nn.LeakyReLU(0.2, inplace=True),
 
 			nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1),
-			nn.MaxPool2d(kernel_size=(2, 2)),
 			nn.BatchNorm2d(64),
 			nn.LeakyReLU(0.2, inplace=True)
 		)
 		
 		self.linear_block1 = nn.Sequential(
-			nn.Linear(1536, 512),
+			nn.Linear(8000, 512),
+			nn.Dropout(p=0.5),
 			nn.LeakyReLU(0.2, inplace=True),
 			nn.Linear(512, 512),
+			nn.Dropout(p=0.5),
 			nn.LeakyReLU(0.2, inplace=True),
 			nn.Linear(512, 630),
 		)

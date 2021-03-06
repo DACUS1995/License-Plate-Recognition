@@ -1,1 +1,1 @@
-from model_v1.models import TranscribeModel
+from .model_v1.models import TranscribeModel

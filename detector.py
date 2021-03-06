@@ -5,7 +5,7 @@ import pytesseract
 import matplotlib.pyplot as plt
 import sys
 
-from utils import deEmojify
+from utils import deEmojify, tensorToWordSync
 from custom_model_handler import CustomModelHandler
 
 class Detector():
@@ -22,7 +22,7 @@ class Detector():
 		else:
 			Detector.__instance = self
 
-	def detect_single(self, image):
+	def detect_single(self, image, method):
 		gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 		(x1, y1, x2, y2), license_plate_contour = self.localize_plate(gray_image)
@@ -34,7 +34,7 @@ class Detector():
 		gray_image = cv2.warpPerspective(gray_image, M, (gray_image.shape[1], gray_image.shape[0]))
 
 		license_plate = gray_image[y1:y2+1, x1:x2+1]
-		license_plate_number = self.extract_characters(license_plate)
+		license_plate_number = self.extract_characters(license_plate, method)
 
 		return license_plate_number
 
@@ -69,7 +69,11 @@ class Detector():
 			result = self._apply_tesseract(plate_image)
 			return result.split("\n")[0]
 		elif method == "custom_model_v1":
-			CustomModelHandler.getInstance("TranscribeModel")
+			plate_image = cv2.cvtColor(plate_image, cv2.COLOR_GRAY2BGR)
+			model = CustomModelHandler.getInstance("TranscribeModel")
+			input_tensor = CustomModelHandler.apply_transforms(Image.fromarray(plate_image))
+			output = model(input_tensor.unsqueeze(0))
+			return tensorToWordSync(output)[0]
 		elif method == "custom":
 			plate_image = 255 - plate_image
 			plate_image[plate_image < 200] = 0
